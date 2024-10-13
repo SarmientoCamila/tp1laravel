@@ -1,55 +1,38 @@
-<?php
+@extends('layout')
+<h1>Contactos</h1>
 
-use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Http\Request;
+@section('contenido')
+<h1>Todos los mensajes</h1>
+<table class="table">
+<thead>
+<tr>
+<th>ID</th>
+<th>Nombre</th>
+<th>Email</th>
+<th>Mensaje</th>
 
-define('LARAVEL_START', microtime(true));
+</tr>
+</thead>
+<tbody>
+@foreach ($messages as $message)
+<tr>
+<td>
+<a href="{{route('messages.show',$message->id)}}">
+{{ $message->id }}</a></td>
+<td>{{ $message->nombre }}</td>
+<td>{{ $message->email }}</td>
+<td>{{ $message->mensaje }}</td>
+<td>
+<a class="btn btn-info btn-xs" href="{{ route('messages.edit', $message->id) }}">Editar</a>
+<form style="display:inline" method="POST" action="{{ route('messages.destroy', $message->id) }}">
+{!! csrf_field() !!}
+{!! method_field('DELETE') !!}
 
-/*
-|--------------------------------------------------------------------------
-| Check If The Application Is Under Maintenance
-|--------------------------------------------------------------------------
-|
-| If the application is in maintenance / demo mode via the "down" command
-| we will load this file so that any pre-rendered content can be shown
-| instead of starting the framework, which could cause an exception.
-|
-*/
-
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
-}
-
-/*
-|--------------------------------------------------------------------------
-| Register The Auto Loader
-|--------------------------------------------------------------------------
-|
-| Composer provides a convenient, automatically generated class loader for
-| this application. We just need to utilize it! We'll simply require it
-| into the script here so we don't need to manually load our classes.
-|
-*/
-
-require __DIR__.'/../vendor/autoload.php';
-
-/*
-|--------------------------------------------------------------------------
-| Run The Application
-|--------------------------------------------------------------------------
-|
-| Once we have the application, we can handle the incoming request using
-| the application's HTTP kernel. Then, we will send the response back
-| to this client's browser, allowing them to enjoy our application.
-|
-*/
-
-$app = require_once __DIR__.'/../bootstrap/app.php';
-
-$kernel = $app->make(Kernel::class);
-
-$response = $kernel->handle(
-    $request = Request::capture()
-)->send();
-
-$kernel->terminate($request, $response);
+<button class="btn btn-danger btn-xs" type="submit">Eliminar</button>
+</form>
+</td>
+</tr>
+@endforeach
+<!--!! $messages->fragment('hash')->appends(request()->query())->links('pagination::default') !!--> </tbody>
+</table>
+@stop
